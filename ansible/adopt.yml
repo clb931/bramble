@@ -1,0 +1,6 @@
+---
+- hosts: bramble
+  user: pi
+  roles:
+    - common
+    - node_exporter

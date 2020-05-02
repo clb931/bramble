@@ -1,0 +1,57 @@
+- name: Create node_exporter group
+  become: yes
+  group:
+    name: "{{ groupId }}"
+
+- name: Create node_exporter user
+  become: yes
+  user:
+    state: present
+    system: yes
+    createhome: no
+    name: "{{ userId }}"
+    group: "{{ groupId }}"
+    shell: "/sbin/nologin"
+
+- name: Download node_exporter for Prometheus
+  register: download
+  unarchive:
+    remote_src: yes
+    creates: "{{ bin }}"
+    src: "https://github.com/prometheus/node_exporter/releases/download/v{{ version }}/node_exporter-{{ version }}.linux-{{ arch }}.tar.gz"
+    dest: "/tmp/"
+
+- name: Install node_exporter for Prometheus
+  when: download.changed
+  become: yes
+  copy:
+    remote_src: yes
+    src: "/tmp/node_exporter-{{ version }}.linux-{{ arch }}/node_exporter"
+    dest: "{{ bin }}"
+    owner: "{{ userId }}"
+    group: "{{ groupId }}"
+    mode: 0755
+
+- name: Delete node_exporter tmp files
+  file:
+    state: absent
+    path: "/tmp/node_exporter-{{ version }}.linux-{{ arch }}/node_exporter"
+
+- name: Create node_exporter systemd init file
+  become: yes
+  template:
+    src: node_exporter.service.j2
+    dest: "/etc/systemd/system/node_exporter.service"
+
+- name: Start node_exporter service
+  become: yes
+  service:
+    name: node_exporter
+    state: started
+    enabled: yes
+
+- name: Verify node_exporter service
+  uri:
+    method: GET
+    url: http://localhost:9100/metrics
+    status_code: 200
