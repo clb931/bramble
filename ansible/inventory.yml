@@ -1,0 +1,24 @@
+---
+all:
+  vars:
+    remote_user: pi
+  hosts:
+    bramble-m1:
+      ansible_connection: local
+    bramble-s1:
+      ansible_host: bramble-s1.local
+    bramble-s2:
+      ansible_host: bramble-s2.local
+  children:
+    bramble:
+      hosts:
+        bramble-m1: {}
+        bramble-s1: {}
+        bramble-s2: {}
+    bramble-m:
+      hosts:
+        bramble-m1: {}
+    bramble-s:
+      hosts:
+        bramble-s1: {}
+        bramble-s2: {}
