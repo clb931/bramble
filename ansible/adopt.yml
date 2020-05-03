@@ -4,6 +4,7 @@
   roles:
     - common
     - node_exporter
+    - rpi_exporter
 
 - hosts: bramble-m
   user: pi

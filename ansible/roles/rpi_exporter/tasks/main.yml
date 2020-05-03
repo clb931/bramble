@@ -1,0 +1,59 @@
+---
+- name: Create rpi_exporter group
+  become: yes
+  group:
+    name: "{{ groupId }}"
+
+- name: Create rpi_exporter user
+  become: yes
+  user:
+    state: present
+    system: yes
+    createhome: no
+    name: "{{ userId }}"
+    group: "{{ groupId }}"
+    groups: "{{ groupId }},video"
+    shell: "/sbin/nologin"
+
+- name: Download rpi_exporter for Prometheus
+  register: download
+  unarchive:
+    remote_src: yes
+    creates: "{{ bin }}"
+    src: "https://github.com/lukasmalkmus/rpi_exporter/releases/download/v{{ version }}/rpi_exporter-{{ version }}.linux-{{ arch }}.tar.gz"
+    dest: "/tmp/"
+
+- name: Install rpi_exporter for Prometheus
+  become: yes
+  when: download.changed
+  copy:
+    remote_src: yes
+    src: "/tmp/rpi_exporter-{{ version }}.linux-{{ arch }}/rpi_exporter"
+    dest: "{{ bin }}"
+    owner: "{{ userId }}"
+    group: "{{ groupId }}"
+    mode: 0755
+
+- name: Delete rpi_exporter tmp files
+  file:
+    state: absent
+    path: "/tmp/rpi_exporter-{{ version }}.linux-{{ arch }}"
+
+- name: Create rpi_exporter systemd init file
+  become: yes
+  template:
+    src: rpi_exporter.service.j2
+    dest: "/etc/systemd/system/rpi_exporter.service"
+
+- name: Start rpi_exporter service
+  become: yes
+  service:
+    name: rpi_exporter
+    state: started
+    enabled: yes
+
+- name: Verify rpi_exporter service
+  uri:
+    method: GET
+    url: http://localhost:9243/metrics
+    status_code: 200
