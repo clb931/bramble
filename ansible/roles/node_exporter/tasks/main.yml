@@ -1,3 +1,4 @@
+---
 - name: Create node_exporter group
   become: yes
   group:
@@ -35,7 +36,7 @@
 - name: Delete node_exporter tmp files
   file:
     state: absent
-    path: "/tmp/node_exporter-{{ version }}.linux-{{ arch }}/node_exporter"
+    path: "/tmp/node_exporter-{{ version }}.linux-{{ arch }}"
 
 - name: Create node_exporter systemd init file
   become: yes
