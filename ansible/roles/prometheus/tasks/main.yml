@@ -1,0 +1,76 @@
+---
+- name: Create prometheus group
+  become: yes
+  group:
+    name: "{{ groupId }}"
+
+- name: Create prometheus user
+  become: yes
+  user:
+    state: present
+    system: yes
+    createhome: no
+    name: "{{ userId }}"
+    group: "{{ groupId }}"
+    shell: "/sbin/nologin"
+
+- name: Download prometheus
+  register: download
+  unarchive:
+    remote_src: yes
+    creates: "{{ bin }}"
+    src: "https://github.com/prometheus/prometheus/releases/download/v{{ version }}/prometheus-{{ version }}.linux-{{ arch }}.tar.gz"
+    dest: "/tmp/"
+
+- name: Install prometheus
+  when: download.changed
+  become: yes
+  copy:
+    remote_src: yes
+    src: "/tmp/prometheus-{{ version }}.linux-{{ arch }}/prometheus"
+    dest: "{{ bin }}"
+    owner: "{{ userId }}"
+    group: "{{ groupId }}"
+    mode: 0755
+
+- name: Delete prometheus tmp files
+  file:
+    state: absent
+    path: "/tmp/prometheus-{{ version }}.linux-{{ arch }}"
+
+- name: Ensure prometheus directories exists
+  become: yes
+  with_items:
+    - "/etc/prometheus/"
+    - "/data/prometheus"
+  file:
+    state: directory
+    path: "{{ item }}"
+    owner: "{{ userId }}"
+    group: "{{ groupId }}"
+    mode: 0755
+
+- name: Create prometheus config file
+  become: yes
+  template:
+    src: prometheus.config.j2
+    dest: "/etc/prometheus/prometheus.conf"
+
+- name: Create prometheus systemd init file
+  become: yes
+  template:
+    src: prometheus.service.j2
+    dest: "/etc/systemd/system/prometheus.service"
+
+- name: Start prometheus service
+  become: yes
+  service:
+    name: prometheus
+    state: started
+    enabled: yes
+
+- name: Verify prometheus service
+  uri:
+    method: GET
+    url: http://localhost:9090
+    status_code: 200

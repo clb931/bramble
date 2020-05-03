@@ -4,3 +4,8 @@
   roles:
     - common
     - node_exporter
+
+- hosts: bramble-m
+  user: pi
+  roles:
+    - prometheus
