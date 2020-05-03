@@ -1,0 +1,30 @@
+---
+- name: Download grafana
+  get_url:
+    url: "https://dl.grafana.com/oss/release/grafana_{{ version }}_{{ arch }}.deb"
+    dest: "/tmp/"
+
+- name: Install grafana
+  become: yes
+  apt:
+    deb: "/tmp/grafana_{{ version }}_{{ arch }}.deb"
+
+- name: Install/update grafana status panel plugin
+  become: yes
+  grafana_plugin:
+    name: vonage-status-panel
+    version: latest
+    state: present
+
+- name: Start grafana service
+  become: yes
+  service:
+    name: grafana-server
+    state: started
+    enabled: yes
+
+- name: Verify grafana service
+  uri:
+    method: GET
+    url: http://localhost:3000
+    status_code: 200

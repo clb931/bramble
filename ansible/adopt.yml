@@ -9,3 +9,4 @@
   user: pi
   roles:
     - prometheus
+    - grafana
