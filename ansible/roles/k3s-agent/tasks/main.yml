@@ -1,0 +1,16 @@
+---
+- name: Initialize k3s-agent environment
+  become: yes
+  template:
+    src: k3s-agent.env.j2
+    dest: /etc/systemd/system/k3s-agent.service.env
+
+- name: Start k3s-agent
+  become: yes
+  environment:
+    K3S_URL: "https://bramble-m1:6443"
+    K3S_TOKEN: "K10ebbee50fa702ce64e9475fb664a423fbfbef764841805c31f6d4179f4191ab24::server:44d75132a68fb652609c486022cf51dd"
+  service:
+    name: k3s-agent
+    state: restarted
+    enabled: yes  

@@ -3,4 +3,4 @@ arch: armv7
 userId: "prometheus"
 groupId: "prometheus"
 version: 0.18.1
-bin: /usr/local/bin/node_exporter
+bin: "/usr/local/bin/node_exporter"
