@@ -1,0 +1,19 @@
+docker build -t <name:tag> -f <Dockerfile> .
+docker images
+docker rmi <image>
+
+docker ps [--all]
+docker kill <container>
+docker rm <container>
+
+
+
+docker run -p <host_port:container_port> -p <host_port:container_port> -d --name <name> <image>
+docker exec -it <container> <cmd>
+
+
+export DISTCC_SKIP_LOCAL_RETRY=1
+export DISTCC_HOSTS="$LOCAL_DISTCC_IP/2 localhost/2"
+
+make -j$(distcc -j) CC=distcc
+make -j$(distcc -j) CC=distcc zImage modules dtbs

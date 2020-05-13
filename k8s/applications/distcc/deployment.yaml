@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: distcc
+  labels:
+   app: distcc
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: distcc
+  template:
+    metadata:
+      labels:
+        app: distcc
+    spec:
+      containers:
+      - name: distcc
+        image: bramble-m1:5000/distcc:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3632
+          protocol: TCP
+        - containerPort: 3633
+          protocol: TCP

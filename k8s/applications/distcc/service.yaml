@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: distcc
+  labels:
+    app: distcc
+spec:
+  type: NodePort
+  ports:
+    - port: 3632
+      protocol: TCP
+      targetPort: 3632
+      nodePort: 30632
+      name: cc
+    - port: 3633
+      protocol: TCP
+      targetPort: 3633
+      nodePort: 30633
+      name: stats
+  selector:
+    app: distcc
