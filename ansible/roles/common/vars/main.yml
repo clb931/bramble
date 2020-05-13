@@ -1,0 +1,3 @@
+---
+registry_fqdn: bramble-m1
+cert: /home/pi/bramble/ssl/certs/domain.crt

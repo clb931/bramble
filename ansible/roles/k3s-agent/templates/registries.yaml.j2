@@ -1,0 +1,11 @@
+mirrors:
+  docker.io:
+    endpoint:
+      - "https://{{ registry }}"
+configs:
+  "{{ registry }}":
+    auth:
+      username: admin
+      password: admin
+    tls:
+      ca_file: "/etc/docker/certs.d/{{ registry }}/ca.crt"

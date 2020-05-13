@@ -7,6 +7,18 @@
     update_cache: yes
     cache_valid_time: 86400
 
+- name: 'Ensure certificate dirs exist'
+  become: yes
+  file:
+    state: directory
+    path: "/etc/docker/certs.d/{{ registry_fqdn }}:5000"
+
+- name: 'Install certs'
+  become: yes
+  copy:
+    src: "{{ cert }}"
+    dest: "/etc/docker/certs.d/{{ registry_fqdn }}:5000/ca.crt"
+
 - name: 'Install packages'
   become: yes
   apt:
