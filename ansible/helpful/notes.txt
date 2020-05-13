@@ -1,0 +1,1 @@
+ansible-playbook -i ansible/inventory.yml ansible/adopt.yml --tags "k3s-agent"

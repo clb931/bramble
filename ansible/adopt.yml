@@ -2,12 +2,17 @@
 - hosts: bramble
   user: pi
   roles:
-    - common
-    - node_exporter
-    - rpi_exporter
+    - { role: 'common', tags: 'common' }
+    - { role: 'node_exporter', tags: 'node_exporter' }
+    - { role: 'rpi_exporter', tags: 'rpi_exporter' }
+
+- hosts: bramble-s
+  user: pi
+  roles:
+    - { role: 'k3s-agent', tags: 'k3s-agent' }
 
 - hosts: bramble-m
   user: pi
   roles:
-    - prometheus
-    - grafana
+    - { role: 'prometheus', tags: 'prometheus' }
+    - { role: 'grafana', tags: 'grafana' }
