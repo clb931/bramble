@@ -9,12 +9,18 @@ all:
       ansible_host: bramble-s1.local
     bramble-s2:
       ansible_host: bramble-s2.local
+    bramble-s3:
+      ansible_host: bramble-s3.local
+    bramble-s4:
+      ansible_host: bramble-s4.local
   children:
     bramble:
       hosts:
         bramble-m1: {}
         bramble-s1: {}
         bramble-s2: {}
+        bramble-s3: {}
+        bramble-s4: {}
     bramble-m:
       hosts:
         bramble-m1: {}
@@ -22,3 +28,5 @@ all:
       hosts:
         bramble-s1: {}
         bramble-s2: {}
+        bramble-s3: {}
+        bramble-s4: {}
