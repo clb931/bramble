@@ -1,1 +1,2 @@
+ansible bramble-s -i ansible/inventory.yml -m ping
 ansible-playbook -i ansible/inventory.yml ansible/adopt.yml --tags "k3s-agent"
