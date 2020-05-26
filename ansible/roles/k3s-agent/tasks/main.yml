@@ -1,4 +1,19 @@
 ---
+- name: Download k3s
+  get_url:
+    url: "https://get.k3s.io"
+    dest: "/tmp/install_k3s.sh"
+    mode: 777
+  
+- name: Install k3s
+  become: yes
+  shell: "/tmp/install_k3s.sh agent"
+
+- name: Delete k3s tmp files
+  file:
+    state: absent
+    path: "/tmp/install_k3s.sh"
+
 - name: Ensure k3s directories exists
   become: yes
   file:
