@@ -9,6 +9,11 @@
   apt:
     deb: "/tmp/grafana_{{ version }}_{{ arch }}.deb"
 
+- name: Delete grafana tmp files
+  file:
+    state: absent
+    path: "/tmp/grafana_{{ version }}_{{ arch }}.deb"
+
 - name: Install/update grafana status panel plugin
   become: yes
   grafana_plugin:
