@@ -1,0 +1,37 @@
+---
+- name: Download k3s
+  get_url:
+    url: "https://get.k3s.io"
+    dest: "/tmp/install_k3s.sh"
+    mode: 777
+  
+- name: Install k3s
+  become: yes
+  shell: "/tmp/install_k3s.sh server"
+
+- name: Delete k3s tmp files
+  file:
+    state: absent
+    path: "/tmp/install_k3s.sh"
+
+- name: Ensure k3s directories exists
+  become: yes
+  file:
+    state: directory
+    path: "/etc/rancher/k3s"
+    
+- name: Initialize k3s environment
+  become: yes
+  with_items:
+    - { src: "k3s-agent.env.j2", dest: "/etc/systemd/system/k3s-agent.service.env" }
+    - { src: "registries.yaml.j2", dest: "/etc/rancher/k3s/registries.yaml" }
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+
+- name: Start k3s
+  become: yes
+  service:
+    name: k3s
+    state: restarted
+    enabled: yes  
