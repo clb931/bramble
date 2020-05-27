@@ -1,5 +1,0 @@
----
-- hosts: bramble-s
-  user: pi
-  roles:
-    - k3s-agent
