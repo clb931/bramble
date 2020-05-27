@@ -21,3 +21,7 @@ spec:
         ports:
         - containerPort: 8080
           protocol: TCP
+      tolerations:
+      - key: "key"
+        operator: "Exists"
+        effect: "NoSchedule"
