@@ -1,3 +1,4 @@
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -25,3 +26,34 @@ spec:
       - key: "key"
         operator: "Exists"
         effect: "NoSchedule"
+
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: openfaas-figlet
+  labels:
+    app: openfaas-figlet
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+      protocol: TCP
+      targetPort: 8080
+      name: http
+  selector:
+    app: openfaas-figlet
+
+
+
+---
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: openfaas-figlet
+spec:
+  backend:
+    serviceName: openfaas-figlet
+    servicePort: 8080
