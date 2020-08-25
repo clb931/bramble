@@ -1,0 +1,70 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: icecc
+  labels:
+   app: icecc
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: icecc
+  template:
+    metadata:
+      labels:
+        app: icecc
+    spec:
+      containers:
+      - name: icecc
+        image: bramble-m1:5000/icecc:v0.1.0
+        imagePullPolicy: Always
+        command:
+        - /bin/sh
+        args:
+        - -c
+        - "iceccd -vvv -s 192.168.100.100 -m 8"
+        ports:
+        - containerPort: 10245
+          hostPort: 10245
+          protocol: TCP
+        - containerPort: 8765
+          hostPort: 8765
+          protocol: TCP
+        - containerPort: 8766
+          hostPort: 8766
+          protocol: TCP
+        - containerPort: 8765
+          hostPort: 8765
+          protocol: UDP
+
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: icecc
+  labels:
+    app: icecc
+spec:
+  type: NodePort
+  ports:
+    - port: 10245
+      protocol: TCP
+      targetPort: 10245
+      name: daemon
+    - port: 8765
+      protocol: TCP
+      targetPort: 8765
+      name: scheduler
+    - port: 8766
+      protocol: TCP
+      targetPort: 8766
+      name: telnet
+    - port: 8765
+      protocol: UDP
+      targetPort: 8765
+      name: broadcaster
+  selector:
+    app: icecc
