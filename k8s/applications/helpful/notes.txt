@@ -12,16 +12,9 @@ docker run -p <host_port:container_port> -p <host_port:container_port> -d --name
 docker exec -it <container> <cmd>
 
 
-export DISTCC_SKIP_LOCAL_RETRY=1
-export DISTCC_HOSTS="$LOCAL_DISTCC_IP/2 localhost/2"
-export DISTCC_HOSTS="bramble-s1:30632 bramble-s2:30632 bramble-s3:30632 bramble-s4:30632"
-
-make -j$(distcc -j) CC=distcc
-make -j$(distcc -j) CC=distcc zImage modules dtbs
 
 
-export DISTCC_POTENTIAL_HOSTS="bramble-s1 bramble-s2 bramble-s3 bramble-s4"
-pump make -j$(distcc -j) CC="distcc gcc" zImage modules dtbs
+make -j4 CC=distcc
+make -j4 CC=distcc zImage modules dtbs
 
 
-docker run -d -p 5000:5000 --restart=always -v /home/pi/bramble/docker/config.yaml:/etc/docker/registry/config.yml --name registry-cache bramble-m1:5000/registry:2

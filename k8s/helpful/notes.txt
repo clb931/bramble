@@ -1,10 +1,12 @@
 sudo kubectl run distcc --image=<image> --port=<port>
-sudo kubectl create -f <deployment_yaml_file>
+sudo kubectl [create|delete] -f <deployment_yaml_file>
 sudo kubectl get deployments
-sudo kubectl delete deployments/<deployment>
+sudo kubectl delete deployment <deployment>
 
 sudo kubectl get pods
 sudo kubectl describe pod <pod>
+
+sudo kubectl exec --stdin --tty pihole-55f4fc448f-75cz7 -- /bin/bash
 
 /etc/systemd/system/k3s.service
 sudo systemctl daemon-reload
@@ -23,16 +25,34 @@ docker pull localhost:5000/<name:tag>
 
 
 openssl req -newkey rsa:4096 -nodes -sha256 -keyout certs/domain.key -x509 -days 365 -out certs/domain.crt
-docker run -d \
-  --name registry \
-  --restart=always \
-  -p 5000:5000 \
-  -e "REGISTRY_HTTP_TLS_CERTIFICATE=/cert/domain.crt" \
-  -e "REGISTRY_HTTP_TLS_KEY=/cert/domain.key" \
-  -e "REGISTRY_AUTH=htpasswd" \
-  -e "REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd" \
-  -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" \
-  -v /home/pi/bramble/ssl/data:/var/lib/registry \
-  -v /home/pi/bramble/ssl/certs:/cert \
-  -v /home/pi/bramble/ssl/auth:/auth \
-  bramble-m1:5000/registry:2
+  
+for docker.io registry cache:
+  docker run -d \
+    --name registry-cache \
+    --restart=always \
+    -p 5001:5000 \
+    -e "REGISTRY_HTTP_TLS_CERTIFICATE=/cert/domain.crt" \
+    -e "REGISTRY_HTTP_TLS_KEY=/cert/domain.key" \
+    -e "REGISTRY_AUTH=htpasswd" \
+    -e "REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd" \
+    -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" \
+    -v /home/pi/bramble/ssl/data:/var/lib/registry \
+    -v /home/pi/bramble/ssl/certs:/cert \
+    -v /home/pi/bramble/ssl/auth:/auth \
+    -v /home/pi/bramble/docker/config.yaml:/etc/docker/registry/config.yml \
+    registry:2
+for local registry:
+  docker run -d \
+    --name registry \
+    --restart=always \
+    -p 5000:5000 \
+    -e "REGISTRY_HTTP_TLS_CERTIFICATE=/cert/domain.crt" \
+    -e "REGISTRY_HTTP_TLS_KEY=/cert/domain.key" \
+    -e "REGISTRY_AUTH=htpasswd" \
+    -e "REGISTRY_AUTH_HTPASSWD_PATH=/auth/htpasswd" \
+    -e "REGISTRY_AUTH_HTPASSWD_REALM=Registry Realm" \
+    -v /home/pi/bramble/ssl/data:/var/lib/registry \
+    -v /home/pi/bramble/ssl/certs:/cert \
+    -v /home/pi/bramble/ssl/auth:/auth \
+    registry:2
+ 

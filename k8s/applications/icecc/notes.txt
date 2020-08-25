@@ -1,0 +1,2 @@
+export PATH=/usr/lib/icecc/bin:$PATH
+make -j32 zImage modules dtbs
