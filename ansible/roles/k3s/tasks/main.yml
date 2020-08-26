@@ -20,14 +20,14 @@
     state: directory
     path: "/etc/rancher/k3s"
     
-- name: Initialize k3s environment
-  become: yes
-  with_items:
-    - { src: "k3s-agent.env.j2", dest: "/etc/systemd/system/k3s-agent.service.env" }
-    - { src: "registries.yaml.j2", dest: "/etc/rancher/k3s/registries.yaml" }
-  template:
-    src: "{{ item.src }}"
-    dest: "{{ item.dest }}"
+# - name: Initialize k3s environment
+#   become: yes
+#   with_items:
+#     - { src: "k3s-agent.env.j2", dest: "/etc/systemd/system/k3s-agent.service.env" }
+#     # - { src: "registries.yaml.j2", dest: "/etc/rancher/k3s/registries.yaml" }
+#   template:
+#     src: "{{ item.src }}"
+#     dest: "{{ item.dest }}"
 
 - name: Start k3s
   become: yes

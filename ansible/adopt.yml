@@ -16,3 +16,5 @@
   roles:
     - { role: 'prometheus', tags: 'prometheus' }
     - { role: 'grafana', tags: 'grafana' }
+    - { role: 'k3s', tags: 'k3s' }
+    - { role: 'nfs', tags: 'nfs' }
