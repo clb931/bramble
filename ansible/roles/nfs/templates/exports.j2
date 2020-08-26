@@ -1,0 +1,3 @@
+{% for dir in sharedDirs %}
+{{ dir }} {{ inventory_hostname }}(rw,all_squash,insecure,async,no_subtree_check,anonuid=1000,anongid=1000)
+{% endfor %}

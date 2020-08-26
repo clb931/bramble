@@ -1,0 +1,45 @@
+---
+- name: 'Update/Upgrade apt packages'
+  become: yes
+  apt:
+    force_apt_get: yes
+    upgrade: yes
+    update_cache: yes
+    cache_valid_time: 86400
+
+- name: 'Install nfs packages'
+  become: yes
+  apt:
+    force_apt_get: yes
+    pkg:
+    - nfs-common
+    - nfs-kernel-server
+
+- name: 'Install nfs config files'
+  become: yes
+  with_items:
+    - src: "exports.j2"
+      dst: "/etc/exports"
+    - src: "nfs-common.j2"
+      dst: "/etc/default/nfs-common"
+    - src: "nfs-kernel-server.script.j2"
+      dst: "/etc/init.d/nfs-kernel-server"
+    - src: "nfs-kernel-server.cfg.j2"
+      dst: "/etc/default/nfs-kernel-server"
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dst }}"
+
+- name: 'Ensure nfs shared dirs exist'
+  become: yes
+  with_items: "{{ sharedDirs }}"
+  file:
+    state: directory
+    path: "{{ item }}"
+
+- name: Start nfs service
+  become: yes
+  service:
+    name: nfs-kernel-server
+    state: restarted
+    enabled: yes
